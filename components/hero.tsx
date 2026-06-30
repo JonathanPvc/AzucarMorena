@@ -5,7 +5,7 @@ import { CakeSlice } from "lucide-react"
 
 export function Hero() {
   return (
-    <section id="inicio" className="relative min-h-screen flex flex-col pt-20">
+    <section id="inicio" className="relative min-h-screen flex flex-col pt-28">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-cream via-honey/30 to-peach/20" />
       
@@ -14,9 +14,9 @@ export function Hero() {
         <Image
           src="/images/logo.png"
           alt="Azúcar Morena - Dulce Experiencia"
-          width={400}
-          height={200}
-          className="h-32 md:h-44 lg:h-52 w-auto"
+          width={600}
+          height={520}
+          className="h-64 md:h-80 lg:h-[28rem] w-auto mx-auto"
           priority
         />
         <div className="mt-4 flex items-center gap-3">

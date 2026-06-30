@@ -35,13 +35,13 @@ export function Footer() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
-          <div className="flex flex-col justify-center items-center text-center md:items-start md:text-left">
+          <div className="flex flex-col justify-center items-center text-center">
             <Image
               src="/images/logo.png"
               alt="Azúcar Morena"
-              width={300}
-              height={120}
-              className="h-25 w-auto mb-4 brightness-0 invert opacity-90 justify-center items-center"
+              width={420}
+              height={180}
+              className="h-24 md:h-32 lg:h-36 w-auto mx-auto mb-4 brightness-0 invert opacity-90"
             />
             <p className="text-cream/70 leading-relaxed max-w-sm">
               Creando momentos dulces e inolvidables para tus celebraciones más especiales.

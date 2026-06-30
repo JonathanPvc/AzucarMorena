@@ -19,15 +19,15 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-oat">
       <nav className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-28">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
               src="/images/logo.png"
               alt="Azúcar Morena"
-              width={200}
-              height={80}
-              className="h-26 w-auto"
+              width={280}
+              height={112}
+              className="h-24 w-auto"
               priority
             />
           </Link>
