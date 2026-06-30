@@ -70,7 +70,7 @@ export function Hero() {
               {/* Main image */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-blush/10">
                 <Image
-                  src="/images/hero-cake.jpg"
+                  src="/images/Boda.jpeg"
                   alt="Pastel artesanal de Azúcar Morena"
                   width={600}
                   height={600}
