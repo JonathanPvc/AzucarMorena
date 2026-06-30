@@ -91,7 +91,21 @@ export function Contact() {
     if (Object.values(allErrors).some((err) => err !== "")) return
 
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Build WhatsApp message with all form data
+    const text = [
+      "Hola! Solicito una cotizacion:",
+      "",
+      "Nombre: " + values.name,
+      "Email: " + values.email,
+      "Telefono: " + values.phone,
+      "Tipo de evento: " + values.event,
+      "Mensaje: " + values.message,
+    ].join("\n")
+
+    const waUrl = `https://wa.me/573154357707?text=${encodeURIComponent(text)}`
+    window.open(waUrl, "_blank", "noopener,noreferrer")
+
     setIsSubmitting(false)
     setIsSubmitted(true)
 
@@ -100,7 +114,7 @@ export function Contact() {
       setValues(initialValues)
       setErrors(initialErrors)
       setTouched(initialTouched)
-    }, 3000)
+    }, 3500)
   }
 
   // Helper for field styling

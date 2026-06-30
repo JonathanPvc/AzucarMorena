@@ -81,7 +81,8 @@ export function Gallery() {
                 src={work.src}
                 alt={work.alt}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -112,16 +113,20 @@ export function Gallery() {
             <X size={32} />
           </button>
           <div
-            className="relative max-w-4xl max-h-[90vh] w-full"
+            className="relative w-full max-w-3xl"
+            style={{ maxHeight: "85vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              width={1200}
-              height={1500}
-              className="object-contain w-full h-full rounded-lg"
-            />
+            <div className="relative w-full" style={{ maxHeight: "85vh", aspectRatio: "auto" }}>
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                width={900}
+                height={1100}
+                className="object-contain w-full rounded-lg"
+                style={{ maxHeight: "80vh", width: "auto", margin: "0 auto", display: "block" }}
+              />
+            </div>
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/80 to-transparent rounded-b-lg">
               <span className="inline-block bg-blush text-white text-xs font-medium px-3 py-1 rounded-full mb-1">
                 {selectedImage.category}

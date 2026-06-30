@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { CakeSlice } from "lucide-react"
 
 export function Hero() {
   return (
@@ -82,11 +83,11 @@ export function Hero() {
               {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 hidden sm:block">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-avocado/20 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🎂</span>
+                  <div className="w-12 h-12 bg-blush/15 rounded-full flex items-center justify-center">
+                    <CakeSlice className="w-6 h-6 text-blush" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">+500</p>
+                    <p className="text-sm font-bold text-foreground">+500</p>
                     <p className="text-xs text-foreground/60">Pasteles creados</p>
                   </div>
                 </div>
