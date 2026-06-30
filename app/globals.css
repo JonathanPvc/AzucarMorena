@@ -1,0 +1,203 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Azúcar Morena Color Palette */
+  --background: #FFFAF2; /* coconut cream */
+  --foreground: #5a5243; /* warm dark brown */
+  --card: #FFFAF2; /* coconut cream */
+  --card-foreground: #5a5243;
+  --popover: #FFFAF2;
+  --popover-foreground: #5a5243;
+  --primary: #DD8AAE; /* blush beet - main pink */
+  --primary-foreground: #FFFAF2;
+  --secondary: #C2C395; /* avocado smoothie */
+  --secondary-foreground: #5a5243;
+  --muted: #F6EAD4; /* honey oatmilk */
+  --muted-foreground: #818263; /* savory sage */
+  --accent: #EFD7CF; /* peach protein */
+  --accent-foreground: #5a5243;
+  --destructive: #c75050;
+  --destructive-foreground: #FFFAF2;
+  --border: #DCD4C1; /* oat latte */
+  --input: #DCD4C1;
+  --ring: #DD8AAE;
+  --chart-1: #DD8AAE;
+  --chart-2: #C2C395;
+  --chart-3: #818263;
+  --chart-4: #EFD7CF;
+  --chart-5: #F6EAD4;
+  --radius: 0.75rem;
+  
+  /* Custom brand colors */
+  --sage: #818263;
+  --avocado: #C2C395;
+  --blush: #DD8AAE;
+  --peach: #EFD7CF;
+  --oat: #DCD4C1;
+  --honey: #F6EAD4;
+  --cream: #FFFAF2;
+}
+
+@theme inline {
+  --font-sans: var(--font-lato), 'Lato', sans-serif;
+  --font-serif: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Custom brand colors for Tailwind */
+  --color-sage: var(--sage);
+  --color-avocado: var(--avocado);
+  --color-blush: var(--blush);
+  --color-peach: var(--peach);
+  --color-oat: var(--oat);
+  --color-honey: var(--honey);
+  --color-cream: var(--cream);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+/* ── WhatsApp Floating Button ─────────────────────────────── */
+@keyframes whatsapp-bounce-in {
+  0%   { opacity: 0; transform: scale(0.4) translateY(20px); }
+  60%  { transform: scale(1.1) translateY(-4px); }
+  80%  { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes whatsapp-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: whatsapp-bounce-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1s both;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(37, 211, 102, 0.6);
+}
+
+.whatsapp-float:hover .whatsapp-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.whatsapp-icon {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Pulsing ring */
+.whatsapp-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #25D366;
+  animation: whatsapp-ping 2s ease-out infinite;
+  z-index: 0;
+}
+
+/* Tooltip */
+.whatsapp-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateX(8px) translateY(-50%);
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.whatsapp-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #1a1a1a;
+}
