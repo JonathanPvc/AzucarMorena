@@ -94,13 +94,15 @@ export function Contact() {
 
     // Build WhatsApp message with all form data
     const text = [
-      "Hola! Solicito una cotizacion:",
+      "Hola! Vengo de azucarmorenacali.com y quiero solicitar una cotizacion:",
       "",
       "Nombre: " + values.name,
       "Email: " + values.email,
       "Telefono: " + values.phone,
       "Tipo de evento: " + values.event,
       "Mensaje: " + values.message,
+      "",
+      "— Enviado desde azucarmorenacali.com",
     ].join("\n")
 
     const waUrl = `https://wa.me/573154357707?text=${encodeURIComponent(text)}`
