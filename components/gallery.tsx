@@ -1,56 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { X } from "lucide-react"
+import { getProducts, type Product } from "@/lib/api"
 
-const works = [
-  {
-    id: 1,
-    src: "/images/Graduacion.jpeg",
-    alt: "Pastel de bodas elegante",
-    category: "Graduacion",
-    title: "Pastel de Graduacion",
-  },
-  {
-    id: 2,
-    src: "/images/Fornite.jpeg",
-    alt: "Pastel de Fornite",
-    category: "Videojuegos",
-    title: "Pastel de Fornite",
-  },
-  {
-    id: 3,
-    src: "/images/cumplegreen.jpeg",
-    alt: "Pastel de cumpleaños",
-    category: "Cumpleaños",
-    title: "Pastel de Cumpleaños",
-  },
-  {
-    id: 4,
-    src: "/images/Regalo.jpeg",
-    alt: "Detalles especiales",
-    category: "Detalles especiales",
-    title: "Detalles especiales",
-  },
-  {
-    id: 5,
-    src: "/images/TortaVareada.jpeg",
-    alt: "Pastel de cumpleaños temático",
-    category: "Cumpleaños",
-    title: "Pastel de cumpleaños temático",
-  },
-  {
-    id: 6,
-    src: "/images/TortaGemelas.jpeg",
-    alt: "Pastel de cumpleaños stitch",
-    category: "Cumpleaños",
-    title: "Pastel de cumpleaños stitch",
-  },
-]
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(price)
 
 export function Gallery() {
-  const [selectedImage, setSelectedImage] = useState<typeof works[0] | null>(null)
+  const [works, setWorks] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedImage, setSelectedImage] = useState<Product | null>(null)
+
+  useEffect(() => {
+    getProducts()
+      .then(setWorks)
+      .catch(() => setWorks([]))
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <section id="trabajos" className="py-20 lg:py-32 bg-cream">
@@ -64,39 +36,48 @@ export function Gallery() {
             Galería de <span className="text-blush italic">creaciones</span>
           </h2>
           <p className="text-foreground/70 text-lg leading-relaxed">
-            Explora algunas de nuestras creaciones más especiales. Cada pastel cuenta 
+            Explora algunas de nuestras creaciones más especiales. Cada pastel cuenta
             una historia y refleja el amor que ponemos en nuestro trabajo.
           </p>
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {works.map((work) => (
-            <button
-              key={work.id}
-              onClick={() => setSelectedImage(work)}
-              className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-blush focus:ring-offset-2"
-            >
-              <Image
-                src={work.src}
-                alt={work.alt}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-              />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              {/* Content */}
-              <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <span className="inline-block bg-blush/90 text-white text-xs font-medium px-3 py-1 rounded-full mb-2">
-                  {work.category}
-                </span>
-                <h3 className="text-white text-lg font-semibold">{work.title}</h3>
-              </div>
-            </button>
-          ))}
-        </div>
+        {loading ? (
+          <p className="text-center text-foreground/60">Cargando galería...</p>
+        ) : works.length === 0 ? (
+          <p className="text-center text-foreground/60">
+            Muy pronto encontrarás aquí nuestras creaciones.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {works.map((work) => (
+              <button
+                key={work.id}
+                onClick={() => setSelectedImage(work)}
+                className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-blush focus:ring-offset-2"
+              >
+                <Image
+                  src={work.imageUrl}
+                  alt={work.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Content */}
+                <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="inline-block bg-blush/90 text-white text-xs font-medium px-3 py-1 rounded-full mb-2">
+                    {work.category}
+                  </span>
+                  <h3 className="text-white text-lg font-semibold">{work.title}</h3>
+                  <p className="text-white/90 text-sm mt-1">{formatPrice(work.price)}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Lightbox */}
@@ -119,8 +100,8 @@ export function Gallery() {
           >
             <div className="relative w-full" style={{ maxHeight: "85vh", aspectRatio: "auto" }}>
               <Image
-                src={selectedImage.src}
-                alt={selectedImage.alt}
+                src={selectedImage.imageUrl}
+                alt={selectedImage.title}
                 width={900}
                 height={1100}
                 className="object-contain w-full rounded-lg"
@@ -132,6 +113,7 @@ export function Gallery() {
                 {selectedImage.category}
               </span>
               <h3 className="text-white text-xl font-semibold">{selectedImage.title}</h3>
+              <p className="text-white/90 text-sm mt-1">{formatPrice(selectedImage.price)}</p>
             </div>
           </div>
         </div>

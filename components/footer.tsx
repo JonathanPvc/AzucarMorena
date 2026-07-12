@@ -92,19 +92,11 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-cream/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-cream/60 text-sm">
-            © 2026 Azúcar Morena. Todos los derechos reservados.
+          <p className="text-cream/60 text-sm" suppressHydrationWarning>
+            © {new Date().getFullYear()} Azúcar Morena. Todos los derechos reservados.
           </p>
           <p className="text-cream/60 text-sm">
-            Hecho  en Cali - Colombia Desarrollado por{" "}
-            <a
-              href="https://www.example.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-cream transition-colors"
-            >
-             Jonathan Uribe Agredo
-            </a>
+            Hecho con 💕 en Cali - Colombia
           </p>
         </div>
       </div>
