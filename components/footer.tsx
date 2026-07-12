@@ -23,6 +23,9 @@ const footerLinks = [
   { href: "#contacto", label: "Contacto" },
 ]
 
+// Cambia esta URL por la de tu portafolio real
+const DEVELOPER_PORTFOLIO_URL = "https://tu-portafolio.com"
+
 const socialLinks = [
   { href: "https://www.instagram.com/azucarmorena.cali?igsh=d285OXRwMGM0ajFu", icon: Instagram, label: "Instagram" },
   { href: "https://www.facebook.com/share/1PDkAwXLjr/?mibextid=wwXIfr", icon: Facebook, label: "Facebook" },
@@ -96,7 +99,15 @@ export function Footer() {
             © {new Date().getFullYear()} Azúcar Morena. Todos los derechos reservados.
           </p>
           <p className="text-cream/60 text-sm">
-            Hecho con 💕 en Cali - Colombia
+            Hecho con 💕 en Cali - Colombia por{" "}
+            <a
+              href={DEVELOPER_PORTFOLIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-cream transition-colors"
+            >
+              Jonathan Uribe Agredo
+            </a>
           </p>
         </div>
       </div>
