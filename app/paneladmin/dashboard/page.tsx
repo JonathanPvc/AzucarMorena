@@ -11,6 +11,8 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getHeroImage,
+  updateHeroImage,
   type Product,
 } from "@/lib/api"
 import { Input } from "@/components/ui/input"
@@ -34,12 +36,22 @@ export default function AdminDashboardPage() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState("")
 
+  // Foto grande de portada (hero)
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null)
+  const [heroFile, setHeroFile] = useState<File | null>(null)
+  const [heroPreview, setHeroPreview] = useState<string | null>(null)
+  const [heroSubmitting, setHeroSubmitting] = useState(false)
+  const [heroError, setHeroError] = useState("")
+
   useEffect(() => {
     if (!isLoggedIn()) {
       router.replace("/paneladmin")
       return
     }
     loadProducts()
+    getHeroImage()
+      .then((data) => setHeroImageUrl(data.imageUrl))
+      .catch(() => {})
   }, [router])
 
   async function loadProducts() {
@@ -59,6 +71,36 @@ export default function AdminDashboardPage() {
     const selected = e.target.files?.[0] || null
     setFile(selected)
     setPreview(selected ? URL.createObjectURL(selected) : null)
+  }
+
+  function handleHeroFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.files?.[0] || null
+    setHeroFile(selected)
+    setHeroPreview(selected ? URL.createObjectURL(selected) : null)
+  }
+
+  async function handleHeroSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setHeroError("")
+
+    if (!heroFile) {
+      setHeroError("Selecciona una foto primero")
+      return
+    }
+
+    setHeroSubmitting(true)
+    try {
+      const formData = new FormData()
+      formData.append("image", heroFile)
+      const result = await updateHeroImage(formData)
+      setHeroImageUrl(result.imageUrl)
+      setHeroFile(null)
+      setHeroPreview(null)
+    } catch (err) {
+      setHeroError(err instanceof Error ? err.message : "Error al actualizar la foto")
+    } finally {
+      setHeroSubmitting(false)
+    }
   }
 
   // Al hacer clic en "Editar" de una tarjeta: llena el formulario con
@@ -151,6 +193,47 @@ export default function AdminDashboardPage() {
           <Button variant="ghost" onClick={handleLogout} className="text-foreground/70">
             <LogOut className="w-4 h-4 mr-2" /> Salir
           </Button>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 lg:px-8 pt-8">
+        {/* Foto grande de portada (hero) */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm mb-8">
+          <h2 className="font-semibold text-lg mb-1">Foto grande de portada</h2>
+          <p className="text-foreground/60 text-sm mb-4">
+            Es la primera foto que ve cualquiera que entre a la página principal. Cámbiala
+            cuando quieras, sin necesidad de pedirle ayuda a nadie.
+          </p>
+
+          <div className="grid sm:grid-cols-[200px_1fr] gap-6 items-start">
+            <div className="relative aspect-square rounded-xl overflow-hidden bg-cream">
+              {(heroPreview || heroImageUrl) && (
+                <Image
+                  src={heroPreview || heroImageUrl || ""}
+                  alt="Foto de portada actual"
+                  fill
+                  className="object-cover"
+                />
+              )}
+            </div>
+
+            <form onSubmit={handleHeroSubmit} className="space-y-3">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleHeroFileChange}
+                className="block w-full text-sm text-foreground/70 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blush/10 file:text-blush file:font-medium"
+              />
+              {heroError && <p className="text-sm text-red-500">{heroError}</p>}
+              <Button
+                type="submit"
+                disabled={heroSubmitting || !heroFile}
+                className="bg-blush hover:bg-blush/90 text-white rounded-full px-6"
+              >
+                {heroSubmitting ? "Subiendo..." : "Usar esta foto"}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
 

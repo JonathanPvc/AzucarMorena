@@ -1,9 +1,29 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CakeSlice } from "lucide-react"
+import { getHeroImage } from "@/lib/api"
+
+// Foto de respaldo mientras carga la real, o si el admin todavía no ha
+// subido ninguna desde el panel.
+const FALLBACK_IMAGE = "/images/Boda.jpeg"
 
 export function Hero() {
+  const [heroImage, setHeroImage] = useState(FALLBACK_IMAGE)
+
+  useEffect(() => {
+    getHeroImage()
+      .then((data) => {
+        if (data.imageUrl) setHeroImage(data.imageUrl)
+      })
+      .catch(() => {
+        // Si falla, se queda con FALLBACK_IMAGE — no rompemos la portada por esto.
+      })
+  }, [])
+
   return (
     <section id="inicio" className="relative min-h-screen flex flex-col pt-28">
       {/* Background Pattern */}
@@ -71,7 +91,7 @@ export function Hero() {
               {/* Main image */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-blush/10">
                 <Image
-                  src="/images/Boda.jpeg"
+                  src={heroImage}
                   alt="Pastel artesanal de Azúcar Morena"
                   width={600}
                   height={600}

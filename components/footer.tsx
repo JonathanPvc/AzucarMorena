@@ -99,6 +99,22 @@ export function Footer() {
             Hecho con 💕 en Cali - Colombia
           </p>
         </div>
+
+        {/* Crédito de desarrollo */}
+        {/* TODO: cambiar href="#" por tu dominio cuando lo tengas listo */}
+        <div className="text-center pt-4">
+          <p className="text-cream/40 text-xs">
+            Desarrollado por{" "}
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-cream/70 transition-colors underline underline-offset-2"
+            >
+              Jonathan Uribe
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   )

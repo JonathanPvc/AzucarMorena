@@ -65,3 +65,10 @@ export const updateProduct = (id: string, formData: FormData): Promise<Product> 
   apiFetch(`/products/${id}`, { method: "PATCH", body: formData })
 
 export const deleteProduct = (id: string) => apiFetch(`/products/${id}`, { method: "DELETE" })
+
+// ── Foto grande de portada (hero) ──
+export const getHeroImage = (): Promise<{ imageUrl: string | null }> =>
+  apiFetch("/settings/hero-image")
+
+export const updateHeroImage = (formData: FormData): Promise<{ imageUrl: string }> =>
+  apiFetch("/settings/hero-image", { method: "PATCH", body: formData })
