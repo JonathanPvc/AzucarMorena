@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import Image from "next/image"
-import { Trash2, LogOut, Plus, Pencil, X } from "lucide-react"
+import { Trash2, LogOut, Plus, Pencil, X, ArrowLeft } from "lucide-react"
 import { isLoggedIn, clearToken } from "@/lib/auth"
 import {
   getProducts,
@@ -141,9 +142,16 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="bg-white border-b border-oat px-4 lg:px-8 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground font-serif">Panel Admin — Azúcar Morena</h1>
-        <Button variant="ghost" onClick={handleLogout} className="text-foreground/70">
-          <LogOut className="w-4 h-4 mr-2" /> Salir
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/">
+            <Button variant="ghost" className="text-foreground/70">
+              <ArrowLeft className="w-4 h-4 mr-2" /> Ver sitio
+            </Button>
+          </Link>
+          <Button variant="ghost" onClick={handleLogout} className="text-foreground/70">
+            <LogOut className="w-4 h-4 mr-2" /> Salir
+          </Button>
+        </div>
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 py-8 grid lg:grid-cols-[380px_1fr] gap-8">

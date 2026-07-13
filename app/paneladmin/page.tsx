@@ -6,6 +6,8 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { login } from "@/lib/api"
 import { saveToken, isLoggedIn } from "@/lib/auth"
 import { Input } from "@/components/ui/input"
@@ -15,6 +17,7 @@ export default function AdminLoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -40,44 +43,64 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-foreground mb-1 font-serif">Panel Admin</h1>
-        <p className="text-foreground/60 text-sm mb-6">Azúcar Morena — acceso privado</p>
+      <div className="w-full max-w-sm">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-foreground/60 hover:text-blush transition-colors mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver al sitio
+        </Link>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Correo</label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="username"
-              className="bg-white border-oat rounded-xl"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Contraseña</label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              className="bg-white border-oat rounded-xl"
-            />
-          </div>
+        <div className="bg-white rounded-3xl shadow-lg p-8">
+          <h1 className="text-2xl font-bold text-foreground mb-1 font-serif">Panel Admin</h1>
+          <p className="text-foreground/60 text-sm mb-6">Azúcar Morena — acceso privado</p>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Correo</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="username"
+                className="bg-white border-oat rounded-xl"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Contraseña</label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="bg-white border-oat rounded-xl pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-foreground/50 hover:text-foreground/80"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blush hover:bg-blush/90 text-white rounded-full py-5"
-          >
-            {loading ? "Entrando..." : "Entrar"}
-          </Button>
-        </form>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blush hover:bg-blush/90 text-white rounded-full py-5"
+            >
+              {loading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   )
