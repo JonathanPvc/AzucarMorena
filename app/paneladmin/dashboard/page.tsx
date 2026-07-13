@@ -13,6 +13,7 @@ import {
   deleteProduct,
   getHeroImage,
   updateHeroImage,
+  getCategories,
   type Product,
 } from "@/lib/api"
 import { Input } from "@/components/ui/input"
@@ -25,6 +26,7 @@ export default function AdminDashboardPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [loadingList, setLoadingList] = useState(true)
+  const [existingCategories, setExistingCategories] = useState<string[]>([])
 
   // Si editingId es null, el formulario está en modo "crear nuevo".
   // Si tiene un id, está en modo "editar ese producto".
@@ -49,16 +51,33 @@ export default function AdminDashboardPage() {
       return
     }
     loadProducts()
+    loadCategories()
     getHeroImage()
       .then((data) => setHeroImageUrl(data.imageUrl))
       .catch(() => {})
   }, [router])
 
+  async function loadCategories() {
+    try {
+      const cats = await getCategories()
+      const names = cats.map((c) => c.category)
+      setExistingCategories(names)
+      // Si el formulario está vacío (modo "nuevo"), preselecciona la primera
+      // categoría existente en vez de dejarlo en blanco.
+      setForm((f) => (f.category === "" && names.length > 0 ? { ...f, category: names[0] } : f))
+    } catch {
+      // si falla, el formulario simplemente cae al modo "escribir categoría nueva"
+    }
+  }
+
   async function loadProducts() {
     setLoadingList(true)
     try {
-      const data = await getProducts()
-      setProducts(data)
+      // En el panel mostramos hasta 50 más recientes. Si algún día tienes
+      // más de 50 fotos, lo ideal sería agregar paginación aquí también
+      // (avísame y lo hacemos).
+      const data = await getProducts({ limit: 50 })
+      setProducts(data.items)
     } catch {
       clearToken()
       router.replace("/paneladmin")
@@ -121,7 +140,7 @@ export default function AdminDashboardPage() {
 
   function cancelEdit() {
     setEditingId(null)
-    setForm(emptyForm)
+    setForm({ ...emptyForm, category: existingCategories[0] || "" })
     setFile(null)
     setPreview(null)
     setFormError("")
@@ -155,6 +174,7 @@ export default function AdminDashboardPage() {
         setProducts((prev) => [created, ...prev])
       }
 
+      loadCategories() // por si se creó una categoría nueva
       cancelEdit()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "Error al guardar el producto")
@@ -295,13 +315,44 @@ export default function AdminDashboardPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1.5">Categoría</label>
-              <Input
-                value={form.category}
-                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                placeholder="Cumpleaños, Bodas, Graduación..."
-                required
-                className="bg-white border-oat rounded-xl"
-              />
+              {form.category === "__nueva__" || !existingCategories.includes(form.category) ? (
+                <div className="flex gap-2">
+                  <Input
+                    value={form.category === "__nueva__" ? "" : form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    placeholder="Escribe la categoría nueva"
+                    required
+                    autoFocus={existingCategories.length > 0}
+                    className="bg-white border-oat rounded-xl"
+                  />
+                  {existingCategories.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, category: existingCategories[0] || "" }))}
+                      className="text-sm text-foreground/50 hover:text-foreground whitespace-nowrap px-2"
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                  required
+                  className="w-full bg-white border border-oat rounded-xl px-3 py-2 text-sm"
+                >
+                  {existingCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                  <option value="__nueva__">+ Crear categoría nueva</option>
+                </select>
+              )}
+              <p className="text-xs text-foreground/50 mt-1">
+                Elige una categoría existente para evitar duplicados (ej: &quot;Bodas&quot; y &quot;bodas&quot; por separado).
+              </p>
             </div>
 
             <div>

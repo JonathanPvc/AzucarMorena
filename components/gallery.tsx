@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
-import { X } from "lucide-react"
-import { getProducts, type Product } from "@/lib/api"
+import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { getProducts, getCategories, type Product, type CategoryCount } from "@/lib/api"
 
 const PAGE_SIZE = 9
 
@@ -15,50 +15,54 @@ const formatPrice = (price: number) =>
   }).format(price)
 
 export function Gallery() {
+  const [categories, setCategories] = useState<CategoryCount[]>([])
+  const [activeCategory, setActiveCategory] = useState<string>("Todos")
+  const [page, setPage] = useState(1)
+
   const [works, setWorks] = useState<Product[]>([])
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState<Product | null>(null)
 
-  // "Todos" o una categoría específica
-  const [activeCategory, setActiveCategory] = useState<string>("Todos")
-  // Cuántas fotos mostrar de la categoría activa (va creciendo con "Ver más")
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-
+  // Categorías: se cargan UNA vez. Es una consulta liviana (solo nombres +
+  // conteo), no trae fotos, así que no importa si tienes 10 o 10.000 fotos.
   useEffect(() => {
-    getProducts()
-      .then(setWorks)
-      .catch(() => setWorks([]))
-      .finally(() => setLoading(false))
+    getCategories()
+      .then(setCategories)
+      .catch(() => setCategories([]))
   }, [])
 
-  // Categorías únicas presentes en las fotos, con su conteo — se recalculan
-  // solas cada vez que cambian las fotos, así que si el admin crea una
-  // categoría nueva desde el panel, aparece aquí sin tocar código.
-  const categories = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const work of works) {
-      counts.set(work.category, (counts.get(work.category) || 0) + 1)
-    }
-    return [
-      { name: "Todos", count: works.length },
-      ...Array.from(counts.entries())
-        .sort((a, b) => a[0].localeCompare(b[0]))
-        .map(([name, count]) => ({ name, count })),
-    ]
-  }, [works])
-
-  const filteredWorks = useMemo(
-    () => (activeCategory === "Todos" ? works : works.filter((w) => w.category === activeCategory)),
-    [works, activeCategory],
-  )
-
-  const visibleWorks = filteredWorks.slice(0, visibleCount)
-  const hasMore = visibleCount < filteredWorks.length
+  // Fotos de la página/categoría actual — el backend hace el filtrado y
+  // la paginación, así el navegador nunca descarga más de 9 fotos a la vez.
+  useEffect(() => {
+    setLoading(true)
+    getProducts({ category: activeCategory, page, limit: PAGE_SIZE })
+      .then((data) => {
+        setWorks(data.items)
+        setTotal(data.total)
+        setTotalPages(data.totalPages)
+      })
+      .catch(() => {
+        setWorks([])
+        setTotal(0)
+        setTotalPages(1)
+      })
+      .finally(() => setLoading(false))
+  }, [activeCategory, page])
 
   function handleCategoryClick(name: string) {
     setActiveCategory(name)
-    setVisibleCount(PAGE_SIZE) // al cambiar de filtro, vuelve a mostrar solo las primeras 9
+    setPage(1) // siempre vuelve a la página 1 al cambiar de filtro
   }
+
+  function goToPage(n: number) {
+    setPage(n)
+    // Sube el scroll al inicio de la galería, para que el cambio de página se note
+    document.getElementById("trabajos")?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  const totalPhotos = categories.reduce((sum, c) => sum + c.count, 0)
 
   return (
     <section id="trabajos" className="py-20 lg:py-32 bg-cream">
@@ -78,19 +82,29 @@ export function Gallery() {
         </div>
 
         {/* Filtros por categoría */}
-        {!loading && categories.length > 1 && (
+        {categories.length > 0 && (
           <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <button
+              onClick={() => handleCategoryClick("Todos")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === "Todos"
+                  ? "bg-blush text-white"
+                  : "bg-white text-foreground/70 hover:bg-blush/10 hover:text-blush"
+              }`}
+            >
+              Todos <span className="opacity-70">({totalPhotos})</span>
+            </button>
             {categories.map((cat) => (
               <button
-                key={cat.name}
-                onClick={() => handleCategoryClick(cat.name)}
+                key={cat.category}
+                onClick={() => handleCategoryClick(cat.category)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeCategory === cat.name
+                  activeCategory === cat.category
                     ? "bg-blush text-white"
                     : "bg-white text-foreground/70 hover:bg-blush/10 hover:text-blush"
                 }`}
               >
-                {cat.name} <span className="opacity-70">({cat.count})</span>
+                {cat.category} <span className="opacity-70">({cat.count})</span>
               </button>
             ))}
           </div>
@@ -98,17 +112,21 @@ export function Gallery() {
 
         {/* Gallery Grid */}
         {loading ? (
-          <p className="text-center text-foreground/60">Cargando galería...</p>
-        ) : filteredWorks.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-2xl bg-oat/40 animate-pulse" />
+            ))}
+          </div>
+        ) : works.length === 0 ? (
           <p className="text-center text-foreground/60">
-            {works.length === 0
+            {total === 0 && activeCategory === "Todos"
               ? "Muy pronto encontrarás aquí nuestras creaciones."
               : "No hay fotos en esta categoría todavía."}
           </p>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visibleWorks.map((work) => (
+              {works.map((work) => (
                 <button
                   key={work.id}
                   onClick={() => setSelectedImage(work)}
@@ -121,10 +139,7 @@ export function Gallery() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
-                  {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Content */}
                   <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                     <span className="inline-block bg-blush/90 text-white text-xs font-medium px-3 py-1 rounded-full mb-2">
                       {work.category}
@@ -136,13 +151,46 @@ export function Gallery() {
               ))}
             </div>
 
-            {hasMore && (
-              <div className="flex justify-center mt-10">
+            {/* Paginación numerada — reemplaza las fotos en vez de acumularlas,
+                así la página nunca se vuelve interminable sin importar cuántas
+                fotos tengas en total. */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-12">
                 <button
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="px-8 py-3 rounded-full border border-sage text-sage font-medium hover:bg-sage hover:text-white transition-colors"
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1}
+                  className="w-9 h-9 flex items-center justify-center rounded-full border border-oat text-foreground/60 disabled:opacity-30 disabled:cursor-not-allowed hover:border-blush hover:text-blush transition-colors"
+                  aria-label="Página anterior"
                 >
-                  Ver más ({filteredWorks.length - visibleCount} restantes)
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  // Si hay muchas páginas, solo muestra alrededor de la actual
+                  .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+                  .map((n, i, arr) => (
+                    <span key={n} className="flex items-center gap-2">
+                      {i > 0 && arr[i - 1] !== n - 1 && <span className="text-foreground/40">…</span>}
+                      <button
+                        onClick={() => goToPage(n)}
+                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-colors ${
+                          n === page
+                            ? "bg-blush text-white"
+                            : "border border-oat text-foreground/70 hover:border-blush hover:text-blush"
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    </span>
+                  ))}
+
+                <button
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="w-9 h-9 flex items-center justify-center rounded-full border border-oat text-foreground/60 disabled:opacity-30 disabled:cursor-not-allowed hover:border-blush hover:text-blush transition-colors"
+                  aria-label="Página siguiente"
+                >
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             )}

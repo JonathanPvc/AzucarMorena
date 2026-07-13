@@ -13,6 +13,15 @@ export type Product = {
   createdAt: string
 }
 
+export type CategoryCount = { category: string; count: number }
+
+export type PaginatedProducts = {
+  items: Product[]
+  total: number
+  page: number
+  totalPages: number
+}
+
 function getToken(): string | null {
   if (typeof window === "undefined") return null // en el servidor no hay localStorage
   return localStorage.getItem("admin_token")
@@ -45,8 +54,23 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 }
 
 // ── Públicas (las usa la galería) ──
-export const getProducts = (category?: string): Promise<Product[]> =>
-  apiFetch(category ? `/products?category=${encodeURIComponent(category)}` : "/products")
+
+// page/limit permiten traer solo lo que se va a mostrar, no todo el catálogo.
+export const getProducts = (opts?: {
+  category?: string
+  page?: number
+  limit?: number
+}): Promise<PaginatedProducts> => {
+  const params = new URLSearchParams()
+  if (opts?.category && opts.category !== "Todos") params.set("category", opts.category)
+  if (opts?.page) params.set("page", String(opts.page))
+  if (opts?.limit) params.set("limit", String(opts.limit))
+  const query = params.toString()
+  return apiFetch(`/products${query ? `?${query}` : ""}`)
+}
+
+// Trae solo los nombres de categoría + conteo, sin cargar las fotos.
+export const getCategories = (): Promise<CategoryCount[]> => apiFetch("/products/categories/list")
 
 export const getProduct = (id: string): Promise<Product> => apiFetch(`/products/${id}`)
 
