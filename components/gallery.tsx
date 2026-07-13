@@ -16,7 +16,6 @@ export function Gallery() {
   const [works, setWorks] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState<Product | null>(null)
-  const [activeCategory, setActiveCategory] = useState("Todos")
 
   useEffect(() => {
     getProducts()
@@ -24,12 +23,6 @@ export function Gallery() {
       .catch(() => setWorks([]))
       .finally(() => setLoading(false))
   }, [])
-
-  // Categorías únicas, en el orden en que van apareciendo las fotos
-  const categories = ["Todos", ...Array.from(new Set(works.map((w) => w.category)))]
-
-  const filteredWorks =
-    activeCategory === "Todos" ? works : works.filter((w) => w.category === activeCategory)
 
   return (
     <section id="trabajos" className="py-20 lg:py-32 bg-cream">
@@ -48,25 +41,6 @@ export function Gallery() {
           </p>
         </div>
 
-        {/* Filtros por categoría */}
-        {!loading && works.length > 0 && categories.length > 2 && (
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeCategory === cat
-                    ? "bg-blush text-white"
-                    : "bg-white text-foreground/70 hover:bg-blush/10 hover:text-blush"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* Gallery Grid */}
         {loading ? (
           <p className="text-center text-foreground/60">Cargando galería...</p>
@@ -74,13 +48,9 @@ export function Gallery() {
           <p className="text-center text-foreground/60">
             Muy pronto encontrarás aquí nuestras creaciones.
           </p>
-        ) : filteredWorks.length === 0 ? (
-          <p className="text-center text-foreground/60">
-            No hay trabajos en esta categoría todavía.
-          </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredWorks.map((work) => (
+            {works.map((work) => (
               <button
                 key={work.id}
                 onClick={() => setSelectedImage(work)}
@@ -143,6 +113,9 @@ export function Gallery() {
                 {selectedImage.category}
               </span>
               <h3 className="text-white text-xl font-semibold">{selectedImage.title}</h3>
+              {selectedImage.description && (
+                <p className="text-white/80 text-sm mt-1 max-w-xl">{selectedImage.description}</p>
+              )}
               <p className="text-white/90 text-sm mt-1">{formatPrice(selectedImage.price)}</p>
             </div>
           </div>

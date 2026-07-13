@@ -6,8 +6,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { login } from "@/lib/api"
 import { saveToken, isLoggedIn } from "@/lib/auth"
 import { Input } from "@/components/ui/input"
@@ -43,13 +41,6 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-4">
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-lg p-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-foreground/60 hover:text-blush transition-colors mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" /> Volver a la web
-        </Link>
-
         <h1 className="text-2xl font-bold text-foreground mb-1 font-serif">Panel Admin</h1>
         <p className="text-foreground/60 text-sm mb-6">Azúcar Morena — acceso privado</p>
 

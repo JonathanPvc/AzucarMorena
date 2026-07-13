@@ -23,9 +23,6 @@ const footerLinks = [
   { href: "#contacto", label: "Contacto" },
 ]
 
-// Cambia esta URL por la de tu portafolio real
-const DEVELOPER_PORTFOLIO_URL = "https://tu-portafolio.com"
-
 const socialLinks = [
   { href: "https://www.instagram.com/azucarmorena.cali?igsh=d285OXRwMGM0ajFu", icon: Instagram, label: "Instagram" },
   { href: "https://www.facebook.com/share/1PDkAwXLjr/?mibextid=wwXIfr", icon: Facebook, label: "Facebook" },
@@ -52,7 +49,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="flex flex-col items-center text-center md:items-start md:text-left">
             <h3 className="font-semibold text-lg mb-4">Enlaces</h3>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
@@ -69,7 +66,7 @@ export function Footer() {
           </div>
 
           {/* Social & Contact */}
-          <div>
+          <div className="flex flex-col items-center text-center md:items-start md:text-left">
             <h3 className="font-semibold text-lg mb-4">Síguenos</h3>
             <div className="flex gap-4 mb-6">
               {socialLinks.map((social) => (
@@ -99,15 +96,7 @@ export function Footer() {
             © {new Date().getFullYear()} Azúcar Morena. Todos los derechos reservados.
           </p>
           <p className="text-cream/60 text-sm">
-            Hecho con 💕 en Cali - Colombia por{" "}
-            <a
-              href={DEVELOPER_PORTFOLIO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-cream transition-colors"
-            >
-              Jonathan Uribe Agredo
-            </a>
+            Hecho con 💕 en Cali - Colombia
           </p>
         </div>
       </div>

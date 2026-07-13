@@ -15,12 +15,6 @@ const validators = {
     if (v.trim().length < 2) return "Mínimo 2 caracteres"
     return ""
   },
-  email: (v: string) => {
-    if (!v.trim()) return "El email es obligatorio"
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))
-      return "Ingresa un email válido (ej: tu@email.com)"
-    return ""
-  },
   phone: (v: string) => {
     if (!v.trim()) return "El teléfono es obligatorio"
     if (!/^\d+$/.test(v)) return "Solo se permiten números, sin espacios ni guiones"
@@ -41,9 +35,9 @@ const validators = {
 
 type Fields = keyof typeof validators
 
-const initialValues = { name: "", email: "", phone: "", event: "", message: "" }
-const initialErrors = { name: "", email: "", phone: "", event: "", message: "" }
-const initialTouched = { name: false, email: false, phone: false, event: false, message: false }
+const initialValues = { name: "", phone: "", event: "", message: "" }
+const initialErrors = { name: "", phone: "", event: "", message: "" }
+const initialTouched = { name: false, phone: false, event: false, message: false }
 
 export function Contact() {
   const [values, setValues] = useState(initialValues)
@@ -76,10 +70,9 @@ export function Contact() {
     e.preventDefault()
 
     // Touch & validate all fields
-    const allTouched = { name: true, email: true, phone: true, event: true, message: true }
+    const allTouched = { name: true, phone: true, event: true, message: true }
     const allErrors = {
       name: validate("name", values.name),
-      email: validate("email", values.email),
       phone: validate("phone", values.phone),
       event: validate("event", values.event),
       message: validate("message", values.message),
@@ -97,7 +90,6 @@ export function Contact() {
       "Hola! Vengo de azucarmorenacali.com y quiero solicitar una cotizacion:",
       "",
       "Nombre: " + values.name,
-      "Email: " + values.email,
       "Telefono: " + values.phone,
       "Tipo de evento: " + values.event,
       "Mensaje: " + values.message,
@@ -206,53 +198,27 @@ export function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                {/* Name + Email */}
-                <div className="grid sm:grid-cols-2 gap-5">
-                  {/* Name */}
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                      Nombre <span className="text-red-400">*</span>
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Tu nombre"
-                      value={values.name}
-                      onChange={(e) => handleChange("name", e.target.value)}
-                      onBlur={() => handleBlur("name")}
-                      className={fieldClass("name")}
-                      autoComplete="name"
-                    />
-                    {touched.name && errors.name && (
-                      <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-                        <span>⚠</span> {errors.name}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                      Email <span className="text-red-400">*</span>
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="tu@email.com"
-                      value={values.email}
-                      onChange={(e) => handleChange("email", e.target.value)}
-                      onBlur={() => handleBlur("email")}
-                      className={fieldClass("email")}
-                      autoComplete="email"
-                    />
-                    {touched.email && errors.email && (
-                      <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-                        <span>⚠</span> {errors.email}
-                      </p>
-                    )}
-                  </div>
+                {/* Name */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                    Nombre <span className="text-red-400">*</span>
+                  </label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Tu nombre"
+                    value={values.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    onBlur={() => handleBlur("name")}
+                    className={fieldClass("name")}
+                    autoComplete="name"
+                  />
+                  {touched.name && errors.name && (
+                    <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                      <span>⚠</span> {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 {/* Phone */}
