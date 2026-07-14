@@ -106,7 +106,7 @@ export function Footer() {
           <p className="text-cream/40 text-xs">
             Desarrollado por{" "}
             <a
-              href="https://www.jonathanuribe.dev"
+              href="https://jonathanuribe.dev/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-cream/70 transition-colors underline underline-offset-2"
