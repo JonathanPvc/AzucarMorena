@@ -99,9 +99,7 @@ export function Footer() {
             Hecho con 💕 en Cali - Colombia
           </p>
         </div>
-
-        {/* Crédito de desarrollo */}
-        {/* TODO: cambiar href="#" por tu dominio cuando lo tengas listo */}
+ 
         <div className="text-center pt-4">
           <p className="text-cream/40 text-xs">
             Desarrollado por{" "}

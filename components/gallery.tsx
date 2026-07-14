@@ -151,9 +151,6 @@ export function Gallery() {
               ))}
             </div>
 
-            {/* Paginación numerada — reemplaza las fotos en vez de acumularlas,
-                así la página nunca se vuelve interminable sin importar cuántas
-                fotos tengas en total. */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-12">
                 <button
@@ -166,7 +163,6 @@ export function Gallery() {
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  // Si hay muchas páginas, solo muestra alrededor de la actual
                   .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
                   .map((n, i, arr) => (
                     <span key={n} className="flex items-center gap-2">

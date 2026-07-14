@@ -1,7 +1,7 @@
 "use client"
 
 export function WhatsAppButton() {
-  const phone = "573154357707" // Colombia +57
+  const phone = "573154357707"
   const message = encodeURIComponent("Hola! Me gustaria cotizar con ustedes. Podrian darme mas informacion.?")
   const href = `https://wa.me/${phone}?text=${message}`
 
